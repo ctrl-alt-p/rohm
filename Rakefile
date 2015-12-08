@@ -3,5 +3,5 @@
 # for example lib/tasks/capistrano.rake, and they will automatically be available to Rake.
 
 Dir["lib/**/*.rake"].each do |file|
-  require_relative file
+  load "./#{file}"
 end

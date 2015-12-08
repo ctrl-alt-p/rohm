@@ -16,5 +16,4 @@ class Stock < Ohm::Model
 
   # Alias symbol to id
   def symbol; id; end
-
 end
