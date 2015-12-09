@@ -3,7 +3,7 @@ class Option < Ohm::Model
   reference :stock, :Stock
 
   # Attributes of our model
-  attribute :id
+  attribute :code
   attribute :expiration_date
   attribute :days_to_expiration
   attribute :strike_price
@@ -13,7 +13,10 @@ class Option < Ohm::Model
   attribute :volume
   attribute :open_interest
 
-  # Index lookups:
-  index     :id
-
+  unique :code
+  index  :code
+  index  :expiration_date
+  index  :days_to_expiration
+  index  :strike_price
+  index  :delta_price
 end

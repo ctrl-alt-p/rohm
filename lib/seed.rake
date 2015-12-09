@@ -1,6 +1,7 @@
 namespace :seed do
   desc 'Seed Stocks'
   task :stocks do
+    Ohm.redis.call "FLUSHALL"
     Rake::Task['seed:stocks_sp500'].execute()
     Rake::Task['seed:stocks_dow_jones_industrial_average'].execute()
     Rake::Task['seed:stocks_nasdaq_composite'].execute()
@@ -47,25 +48,20 @@ namespace :seed do
 
 
   task :fetch_stocks, [:exchange, :url] do |task, args|
-    require_relative File.expand_path( "#{ File.dirname(__FILE__) }/../app" )
-    require 'csv'
-
     response = Faraday.get(args[:url])
-    keys = nil
-    rows = []
-    CSV.parse(response.body) do |row|
-      if keys.nil?
-        keys = row
-      else
-        rows << Hash[ keys.zip(row) ]
-      end
+    stocks   = response.body.split("\n")[1..-1].map do |line|
+      pieces          = line.split(',')
+      stock           = Stock.with(:symbol, pieces[0]) || Stock.new
+      stock.symbol    = pieces[0]
+      stock.name      = pieces[1..-3].join(',')
+      stock.exchanges ||= []
+      stock.exchanges << args[:exchange]
+      stock.save
+
+      ap stock
+
+      stock
     end
 
-    rows.each do |hash|
-      stock          = Stock[hash['ticker']] || Stock.create(id: hash['ticker'])
-      stock.name     = hash['ticker']
-      stock.exchange = args[:exchange]
-      stock.save
-    end
   end
 end

@@ -1,8 +1,8 @@
 class Stock < Ohm::Model
   # Attributes of our model
-  attribute :id
+  attribute :symbol
   attribute :name
-  attribute :exchange
+  attribute :exchanges
   attribute :bid_price
   attribute :ask_price
   attribute :delta_price
@@ -12,8 +12,6 @@ class Stock < Ohm::Model
   collection :options, :Option
 
   # Index lookups:
-  index     :id
-
-  # Alias symbol to id
-  def symbol; id; end
+  unique    :symbol
+  index     :symbol
 end
