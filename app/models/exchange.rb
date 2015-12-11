@@ -20,16 +20,17 @@ class Exchange < Ohm::Model
       hash
     end
 
-    self.symbols = rows.keys
+    self.symbols = rows.keys.join(',')
     self.save
     Rails.logger.debug { "Generated exchange: #{self.inspect}" }
 
     rows.each do |symbol, name|
-      stock           = Stock.with(:symbol, symbol) || Stock.create(symbol: symbol)
-      stock.name      = name
-      stock.exchanges ||= []
-      stock.exchanges << exchange
-      stock.save
+      stock = Stock.with(:symbol, symbol) || Stock.create(symbol: symbol)
+      stock.update(
+        symbol:    symbol,
+        name:      name,
+        exchanges: [stock.exchanges.to_s.split(','), exchange].flatten.join(','),
+      )
       Rails.logger.debug { "Generated stock: #{stock.inspect}" }
       stock
     end
