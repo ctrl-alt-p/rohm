@@ -1,3 +1,5 @@
+require 'tradier'
+
 class TradierClient
   include Singleton
   attr_accessor :client

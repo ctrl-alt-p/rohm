@@ -1,5 +1,6 @@
 source 'https://rubygems.org'
 
+
 #
 # Core rails gems
 #
@@ -11,6 +12,7 @@ gem 'jbuilder',     '~> 2.0'                # Build JSON APIs with ease. Read mo
 gem 'sdoc',         '~> 0.4.0', group: :doc # bundle exec rake doc:rails generates the API under doc/api.
 gem 'unicorn'                               # Use Unicorn as the app server
 
+
 #
 # Basic development gems:
 #
@@ -18,6 +20,17 @@ gem 'byebug',                group: [:development, :test] # Call 'byebug' anywhe
 gem 'web-console', '~> 2.0', group: :development          # Access an IRB console on exception pages or by using <%= console %> in views
 gem 'spring',                group: :development          # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
 gem 'capistrano-rails',      group: :development          # Use Capistrano for deployment
+
+
+#
+# Unit testing gems:
+#
+gem 'rspec',                                 group: [:development, :test]
+gem 'rspec-rails', '~> 3.0.0',               group: [:development, :test]
+gem 'factory_girl_rails',                    group: [:development, :test]
+gem 'faker', '>= 1.6.1',                     group: [:development, :test]
+gem "fakeredis", require: "fakeredis/rspec", group: [:development, :test]
+
 
 #
 # Gems used by the app:
