@@ -96,6 +96,7 @@ GEM
       faraday (>= 0.7.4, < 0.10)
     globalid (0.3.6)
       activesupport (>= 4.1.0)
+    hashie (3.4.3)
     hiredis (0.6.0)
     hitimes (1.2.3)
     i18n (0.7.0)
@@ -238,6 +239,7 @@ DEPENDENCIES
   faker (>= 1.6.1)
   fakeredis
   faraday
+  hashie
   jbuilder (~> 2.0)
   multi_json
   ohm

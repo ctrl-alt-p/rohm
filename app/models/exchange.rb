@@ -4,50 +4,58 @@ class Exchange < Ohm::Model
   attribute :exchange
   attribute :name
   attribute :url
-  attribute :symbols
+  attribute :symbols_json
+
+  # Objects we own:
+  collection :exchange_to_stocks, :ExchangeToStock
 
   # Index lookups:
   unique    :slug
   index     :slug
 
 
-  # Seed data for the exchanges
-  cattr_accessor :exchanges_opts
-  self.exchanges_opts = {
-    sp500:             { name: 'S&P 500 Index Index',          exchange: 'SP500',                         url: 'https://s3.amazonaws.com/static.quandl.com/tickers/SP500.csv'           },
-    djia:              { name: 'Dow Jones Industrial Average', exchange: 'Dow Jones Industrial Average',  url: 'https://s3.amazonaws.com/static.quandl.com/tickers/dowjonesA.csv'       },
-    nasdaq_composite:  { name: 'NASDAQ Composite Index',       exchange: 'NASDAQ Composite Index',        url: 'https://s3.amazonaws.com/static.quandl.com/tickers/NASDAQComposite.csv' },
-    stocks_nasdaq_100: { name: 'NASDAQ 100 Index',             exchange: 'NASDAQ 100',                    url: 'https://s3.amazonaws.com/static.quandl.com/tickers/nasdaq100.csv'       },
-    nyse_composite:    { name: 'NYSE Composite Index',         exchange: 'NYSE Composite',                url: 'https://s3.amazonaws.com/static.quandl.com/tickers/NYSEComposite.csv'   },
-    ftse_100:          { name: 'FTSE 100 Index',               exchange: 'FTSE 100',                      url: 'https://s3.amazonaws.com/static.quandl.com/tickers/FTSE100.csv'         },
-  }
+  def stock_ids
+    exchange_to_stocks.map(&:stock_id)
+  end
 
+  # Get serialized attribute :symbols_json
+  def symbols
+    return JSON.parse(symbols_json) if symbols_json.present?
+    []
+  end
 
-  # Find/Create the exchanges from the opts hash above:
-  def self.load_exchanges
-    output     = exchanges_opts.map do |slug, hash|
-      # Load the symbols from the CSV url
-      stocks = Faraday.get(hash[:url]).body.split("\n")[1..-1].map do |line|
-        symbol          = line.split(',').first.strip
-        stock           = Stock.with(:symbol, symbol) || Stock.new(symbol: symbol)
-        stock.name      = line.split(',')[1..-3].join(',')
-        stock.exchanges = [stock.exchanges.to_s.split(','), slug].flatten.uniq.join(',')
-        stock
-      end
-      hash[:stocks] = stocks.map(&:symbol).join(',')
-
-      # Load/Create the exchange
-      exchange = Exchange.with(:slug, slug) || Exchange.new(slug: slug)
-
-      # Update the exchange with the seed data:
-      exchange.update(hash)
-      Rails.logger.debug { "Loaded Exchange: slug=#{exchange.slug}, name=#{exchange.name}" }
-
-      # Return the exchange
-      exchange
-    end
-    output
+  # Set serialized attribute :symbols_json
+  def symbols=(values)
+    symbols_json = values.present? ? values.to_json : nil
+    symbols_json
   end
 
 
+  # Load the symbols from the CSV url
+  def reload_symbols!
+    # Fetch the CSV if stocks
+    # - Parse the SYMBOL & NAME from the CSV
+    # - Find/Create the stock for each row in the CSV
+    _stocks = Faraday.get(url).body.split("\n")[1..-1].map do |line|
+      symbol = line.split(',').first.strip
+      name   = line.split(',')[1..-3].join(',')
+      stock  = Stock.with(:symbol, symbol) || Stock.new(symbol: symbol)
+      stock.update(name: name) if stock.name != name
+      stock
+    end
+    new_stock_ids     = _stocks.map(&:id) - stock_ids
+    removed_stock_ids = stock_ids         - _stocks.map(&:id)
+
+    # Remove the stocks from the exchange that no longer apply
+    exchange_to_stocks.to_a.select { |value| removed_stock_ids.include?(value.stock_id) }.map(&:destroy)
+
+    # Add the stocks from the exchange that are new
+    exchange_to_stocks.to_a.select { |value| new_stock_ids.include?(value.stock_id) }.each { |stock_id| ExchangeToStock.create(exchange_id: id, stock_id: stock_id) }
+
+    # Update / Save the symbols list on the model
+    self.symbols=_stocks.map(&:symbol)
+    self.save
+
+    self
+  end
 end
