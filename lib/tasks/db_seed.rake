@@ -1,15 +1,18 @@
+require 'yaml'
+
 namespace :db do
   desc 'Seed the data'
   task :seed => :environment do
-    #
     # Delete the existing data
-    #
     Ohm.redis.call "FLUSHDB"
 
-    #
-    # Re-seed the exchange and stock data
-    #
-    ExchangeHelper::SeedData.new.seed_data!
-    StockHelper::SeedData.new.seed_data!
+    # Refresh the data
+    Rake::Task['db:refresh'].execute
+  end
+
+  desc 'Refresh the data'
+  task :refresh => :environment do
+    SeedExchanges.new.seed!
+    SeedStocks.new.seed!
   end
 end

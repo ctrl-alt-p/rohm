@@ -11,8 +11,8 @@ class TradierClient
 end
 
 # Configure our connections:
-Ohm.redis                     = Redic.new("redis://127.0.0.1:6379")
-TradierClient.instance.client = Tradier::Client.new(access_token: ENV['TRADIER_TOKEN'])
+Ohm.redis            = Redic.new("redis://127.0.0.1:6379")
+TradierClient.client = Tradier::Client.new(access_token: ENV['TRADIER_TOKEN'])
 
 # Load up the app models:
 require_relative "./app/stock"

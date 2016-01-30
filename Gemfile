@@ -36,8 +36,11 @@ gem "fakeredis", require: "fakeredis/rspec", group: [:development, :test]
 # Gems used by the app:
 #
 gem 'faraday'
+gem 'faraday-detailed_logger'
 gem 'awesome_print'
 gem 'ohm'
 gem 'tradier'
 gem 'multi_json'
 gem 'hashie'
+gem 'classy_enum'
+gem 'ruby-progressbar'
