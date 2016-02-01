@@ -1,5 +1,5 @@
 # rohm
-Redis + Ohm => Rohm (roam).  Prof-of-concept implementation of facet-filtering with Redis and Ohm
+Redis + Ohm => Rohm (roam).  
 
-1. Object Hash Mapping to serialize objects into & out-of redis.
-1. Redis filtering using bitmaps
+
+The goal of rohm is to provide a fast and open interface to introduce you to option trading systems using a lightweight and simple application anyone could setup: https://github.com/ctrl-alt-p/rohm
