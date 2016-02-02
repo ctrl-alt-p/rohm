@@ -44,8 +44,8 @@ class Option < Ohm::Model
   index  :strike
   index  :delta
 
-  def self.find_or_create(symbol, stock = nil, expiration_date = nil, strike = nil)
-    Option.with(:symbol, symbol) || Option.create(symbol: symbol, stock_id: stock.id, expiration_date: expiration_date, strike: strike)
+  def self.find_or_create(symbol, stock = nil, expiration_date = nil, strike = nil, last_price = nil, bid_price = nil, ask_price = nil, change = nil, open_interest = nil, bid_size = nil, ask_size = nil, volume = nil)
+    Option.with(:symbol, symbol) || Option.create(symbol: symbol, stock_id: stock.id, expiration_date: expiration_date, strike: strike, last_price: last_price, bid_price: bid_price, ask_price: ask_price, change: change, open_interest: open_interest, bid_size: bid_size, ask_size: ask_size, volume: volume)
   end
 
   def quote= quote

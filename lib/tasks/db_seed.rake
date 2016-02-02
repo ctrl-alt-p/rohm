@@ -12,7 +12,16 @@ namespace :db do
 
   desc 'Refresh the data'
   task :refresh => :environment do
-    SeedExchanges.new.seed!
-    SeedStocks.new.seed!
+    progressbar = ProgressBar.create( :format         => '%E | %a %bᗧ%i %p%% %t',
+                                      :progress_mark  => ' ',
+                                      :remainder_mark => '･',
+                                      :starting_at    => 0,
+                                      )
+
+    SeedExchanges.new.seed! progressbar
+    SeedStocks.new.seed!    progressbar
+    SeedOptions.new.seed!   progressbar
+
+    progressbar.finish
   end
 end

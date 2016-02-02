@@ -50,20 +50,17 @@ class Stock < Ohm::Model
     end
 
     expiration_dates = RetryRequest.retry_request do
-      TradierClient.client.expirations(symbol).map { |date| date.strftime("%Y-%m-%d") }
+      [TradierClient.client.expirations(symbol)].flatten.compact.map { |date| date.strftime("%Y-%m-%d") }
     end
 
-    option_chains    = expiration_dates.map do |expiration_date|
-      # Find all the active chains
-      chain_symbols = RetryRequest.retry_request do
-        TradierClient.client.chains(symbol, expiration: expiration_date).map(&:symbol)
+    # Find all the active chains
+    option_chains = expiration_dates.map do |expiration_date|
+      chains      = RetryRequest.retry_request do
+        TradierClient.client.chains(symbol, expiration: expiration_date)
       end
 
-      # Delete any old chains
-      options.reject { |option| chain_symbols.include?(option.symbol) }.map(&:delete)
-
       # Refresh the quotes for the remaining chanins
-      output = chain_symbols.map { |symbol| Option.find_or_create(symbol, self, expiration_date, nil) }
+      output = [chains].flatten.map { |chain| Option.find_or_create(chain.symbol, self, expiration_date, chain.strike, chain.last, chain.bid, chain.ask, chain.change, chain.open_interest, chain.bid_size, chain.ask_size, chain.volume) }
       output
     end
 
@@ -72,8 +69,6 @@ class Stock < Ohm::Model
     # Delete any stale symbols
     chain_symbols = option_chains.map(&:symbol)
     options.reject { |option| chain_symbols.include?(option.symbol) }.map(&:delete)
-
-    Quote.fetch_data!(option_chains)
 
     self
   end

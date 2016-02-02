@@ -9,28 +9,23 @@ class SeedStocks
   end
 
   # Find/Create the exchanges from the opts hash above:
-  def seed!
+  def seed! progressbar
+    progressbar.stop
+    progressbar.reset
+    progressbar.title = 'Building Stocks'
+    progressbar.total = @stocks.count
+    progressbar.start
+    progressbar.log progressbar.title
+
     log_run_time "Seeding Stocks" do
-      progressbar = ProgressBar.create( :format         => '%E | %a %bᗧ%i %p%% %t',
-                                        :progress_mark  => ' ',
-                                        :remainder_mark => '･',
-                                        :starting_at    => 0,
-                                        :total          => @stocks.count+2,
-                                        :title          => 'Building Stocks',
-                                        )
-      progressbar.start
-
-      Quote.fetch_data! @stocks
-      progressbar.increment
-
-      @stocks.each do |stock|
-        stock.refresh_options!
-        progressbar.increment
+      @stocks.in_groups_of(1000).map(&:compact).each do |stocks|
+        Quote.fetch_data! stocks
+        stocks.map(&:refresh_options!)
+        progressbar.progress = progressbar.progress + stocks.count
       end
-
-      progressbar.finish
     end
 
+    progressbar.finish
     self
   end
 end

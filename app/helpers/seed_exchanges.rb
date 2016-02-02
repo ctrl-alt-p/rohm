@@ -13,21 +13,22 @@ class SeedExchanges
   end
 
   # Find/Create the exchanges from the opts hash above:
-  def seed!
+  def seed! progressbar
+    progressbar.stop
+    progressbar.reset
+    progressbar.title = 'Building Exchanges'
+    progressbar.total = @exchanges.count
+    progressbar.start
+    progressbar.log progressbar.title
+
     log_run_time "Building Exchanges" do
-      progressbar = ProgressBar.create( :format         => '%E | %a %bᗧ%i %p%% %t',
-                                        :progress_mark  => ' ',
-                                        :remainder_mark => '･',
-                                        :starting_at    => 0,
-                                        :total          => @exchanges.count+1,
-                                        :title          => 'Building Exchanges',
-                                        )
-      progressbar.start
       @exchanges.each do |exchange|
         progressbar.increment
         exchange.reload_data!
       end
-      progressbar.finish
     end
+
+    progressbar.finish
+    self
   end
 end
