@@ -31,7 +31,6 @@ class Option < Ohm::Model
   attribute :expiration_date     # Date of expiration
   attribute :expiration_type     # Type of expiration (standard, weekly)
   attribute :days_to_expiration  # Number of days until it expires
-  attribute :delta               # Bid/Ask Delta
 
   # We are owned by a Stock
   reference :stock, :Stock
@@ -41,10 +40,16 @@ class Option < Ohm::Model
   index  :expiration_date
   index  :days_to_expiration
   index  :strike
-  index  :delta
+  index  :price_spread
 
-  def self.find_or_create(symbol, stock = nil, expiration_date = nil, strike = nil, last_price = nil, bid_price = nil, ask_price = nil, change_price = nil, open_interest = nil, bid_size = nil, ask_size = nil, volume = nil)
-    Option.with(:symbol, symbol) || Option.create(symbol: symbol, stock_id: stock.id, expiration_date: expiration_date, strike: strike, last_price: last_price, bid_price: bid_price, ask_price: ask_price, change_price: change_price, open_interest: open_interest, bid_size: bid_size, ask_size: ask_size, volume: volume)
+  def self.find_or_create(symbol, stock = nil, expiration_date = nil, quote = nil)
+    option = Option.find_by_symbol(symbol)
+    return option if option.present?
+
+    option = Option.create(symbol: symbol, stock_id: stock.id, expiration_date: expiration_date)
+    option.quote = quote
+    option.save
+    option
   end
 
   def quote= quote

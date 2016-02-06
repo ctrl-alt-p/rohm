@@ -20,12 +20,23 @@ class SeedStocks
     log_run_time "Seeding Stocks" do
       @stocks.in_groups_of(1000).map(&:compact).each do |stocks|
         Quote.fetch_data! stocks
-        stocks.map(&:refresh_options!)
         progressbar.progress = progressbar.progress + stocks.count
       end
     end
-
     progressbar.finish
+
+    progressbar.title = 'Building Stock Options'
+    progressbar.progress = 0
+    progressbar.start
+    progressbar.log progressbar.title
+    log_run_time "Seeding Stock Options" do
+      @stocks.each do |stock|
+        stock.refresh_options!
+        progressbar.progress = progressbar.progress + 1
+      end
+    end
+    progressbar.finish
+
     self
   end
 end

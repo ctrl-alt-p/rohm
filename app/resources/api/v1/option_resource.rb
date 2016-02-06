@@ -31,7 +31,6 @@ class Api::V1::OptionResource < JSONAPI::Resource
   attribute :expiration_date,    format: :date    # Date of expiration
   attribute :expiration_type,    format: :string  # Type of expiration (standard, weekly)
   attribute :days_to_expiration, format: :integer # Number of days until it expires
-  attribute :delta,              format: :float   # Bid/Ask Delta
 
   # Collection lookup
   def self.records options = {}
