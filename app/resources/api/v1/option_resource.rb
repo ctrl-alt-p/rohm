@@ -32,4 +32,16 @@ class Api::V1::OptionResource < JSONAPI::Resource
   attribute :expiration_type,    format: :string  # Type of expiration (standard, weekly)
   attribute :days_to_expiration, format: :integer # Number of days until it expires
   attribute :delta,              format: :float   # Bid/Ask Delta
+
+  # Collection lookup
+  def self.records options = {}
+    case
+    when options[:symbol].present?
+      Option.find_by_symbol(options[:symbol])
+    when options[:id].present?
+      Option.find(options[:id])
+    else
+      Option.all
+    end
+  end
 end

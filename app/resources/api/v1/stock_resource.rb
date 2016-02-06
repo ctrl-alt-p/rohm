@@ -25,6 +25,9 @@ class Api::V1::StockResource < JSONAPI::Resource
   attribute :ask_exch,          format: :string  # Exchange of ask
   attribute :ask_date,          format: :date    # Date and time of current ask
 
+  # Objects we own:
+  has_many :options
+
   # Collection lookup
   def self.records options = {}
     case
