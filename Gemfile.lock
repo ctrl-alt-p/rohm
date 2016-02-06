@@ -108,6 +108,8 @@ GEM
       activesupport (>= 3.0.0, < 5)
       multi_json (~> 1.2)
     json (1.8.3)
+    jsonapi-resources (0.7.0)
+      rails (>= 4.0)
     kgio (2.10.0)
     loofah (2.0.3)
       nokogiri (>= 1.5.9)
@@ -130,6 +132,7 @@ GEM
       nido
       redic (~> 1.5.0)
       stal
+    parallel (1.6.1)
     rack (1.6.4)
     rack-test (0.6.3)
       rack (>= 1.0)
@@ -248,8 +251,10 @@ DEPENDENCIES
   faraday-detailed_logger
   hashie
   jbuilder (~> 2.0)
+  jsonapi-resources
   multi_json
   ohm
+  parallel
   rails (= 4.2.4)
   rspec
   rspec-rails (~> 3.0.0)

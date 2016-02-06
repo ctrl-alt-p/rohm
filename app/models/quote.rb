@@ -80,6 +80,11 @@ class Quote
     nil
   end
 
+  def cast_date value
+    return value.to_i * 1000 if value.present? && value.is_a?(Date)
+    cast_to_i(value)
+  end
+
   #
   # Read in the Tradier::Quote object
   #
@@ -93,7 +98,7 @@ class Quote
     self.volume=            cast_to_i(data.attrs[:volume])
     self.average_volume=    cast_to_i(data.attrs[:average_volume])
     self.last_volume=       cast_to_i(data.attrs[:last_volume])
-    self.trade_date=        cast(     data.attrs[:trade_date])
+    self.trade_date=        cast_date(data.attrs[:trade_date])
     self.open=              cast_to_f(data.attrs[:open])
     self.high=              cast_to_f(data.attrs[:high])
     self.low=               cast_to_f(data.attrs[:low])
@@ -104,11 +109,11 @@ class Quote
     self.bid=               cast_to_f(data.attrs[:bid])
     self.bidsize=           cast_to_i(data.attrs[:bidsize])
     self.bidexch=           cast(     data.attrs[:bidexch])
-    self.bid_date=          cast(     data.attrs[:bid_date])
+    self.bid_date=          cast_date(data.attrs[:bid_date])
     self.ask=               cast_to_f(data.attrs[:ask])
     self.asksize=           cast_to_i(data.attrs[:asksize])
     self.askexch=           cast(     data.attrs[:askexch])
-    self.ask_date=          cast(     data.attrs[:ask_date])
+    self.ask_date=          cast_date(data.attrs[:ask_date])
     self.open_interest=     cast_to_i(data.attrs[:open_interest])
     self.underlying=        cast(     data.attrs[:underlying])
     self.strike=            cast_to_f(data.attrs[:strike])
@@ -116,12 +121,19 @@ class Quote
     self.expiration_date=   cast(     data.attrs[:expiration_date])
     self.expiration_type=   cast(     data.attrs[:expiration_type])
     self.option_type=       cast(     data.attrs[:option_type])
+
+    puts data.attrs[:expiration_date] if data[:underlying].present?
   end
 
 
   #
   # Friendly aliases
   #
+  def open_price;          open;      end
+  def high_price;          high;      end
+  def low_price;           low;       end
+  def close_price;         close;     end
+  def prev_close_price;    prev_close;end
   def bid_price;           bid;       end
   def bid_size;            bidsize;   end
   def bid_exch;            bidexch;   end
@@ -132,6 +144,7 @@ class Quote
   def last_trade_date;     trade_date;end
   def prev_close;          prevclose; end
   def security_type;       type;      end
+  def change_price;        change;    end
 
   def price_spread
     return nil if ask_price.blank?

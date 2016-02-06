@@ -8,12 +8,17 @@ class Exchange < Ohm::Model
   # Objects we own:
   collection :exchange_to_stocks, :ExchangeToStock
 
+
   # Index lookups:
   unique    :slug
   index     :slug
 
   def self.find_or_create slug, opts
-    Exchange.with(:slug, slug) || Exchange.create(slug: slug, exchange: opts[:exchange], url: opts[:url], name: opts[:name])
+    Exchange.find_by_slug(slug) || Exchange.create(slug: slug, exchange: opts[:exchange], url: opts[:url], name: opts[:name])
+  end
+
+  def stocks
+    Stock.fetch(stock_ids)
   end
 
   def stock_ids
