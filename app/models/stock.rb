@@ -2,11 +2,11 @@ class Stock < Ohm::Model
   attribute :symbol            # Symbol
   attribute :description       # Symbol description
   attribute :security_type     # Type of security (i.e. stock, etf, option, index)
-  attribute :change            # Daily net change
+  attribute :change_price      # Daily net change
   attribute :change_percentage # Daily net change
   attribute :volume            # Volume for the day
   attribute :average_volume    # Average daily volume
-  attribute :last_price        # Last incremental volume
+  attribute :last_price        # Last incremental price
   attribute :last_volume       # Last incremental volume
   attribute :last_trade_date   # Date and time of last trade
   attribute :open              # Opening price
@@ -60,7 +60,7 @@ class Stock < Ohm::Model
       end
 
       # Refresh the quotes for the remaining chanins
-      output = [chains].flatten.map { |chain| Option.find_or_create(chain.symbol, self, expiration_date, chain.strike, chain.last, chain.bid, chain.ask, chain.change, chain.open_interest, chain.bid_size, chain.ask_size, chain.volume) }
+      output = [chains].flatten.map { |chain| Option.find_or_create(chain.symbol, self, expiration_date, chain.strike, chain.last, chain.bid, chain.ask, chain.change_price, chain.open_interest, chain.bid_size, chain.ask_size, chain.volume) }
       output
     end
 
@@ -74,7 +74,7 @@ class Stock < Ohm::Model
   end
 
   def quote= quote
-    [:description, :security_type, :change, :change_percentage, :volume, :average_volume, :last_price, :last_volume, :last_trade_date, :open, :high, :low, :close, :prev_close, :week_52_high, :week_52_low, :bid_price, :bid_size, :bid_exch, :bid_date, :ask_price, :ask_size, :ask_exch, :ask_date].each do |field|
+    [:description, :security_type, :change_price, :change_percentage, :volume, :average_volume, :last_price, :last_volume, :last_trade_date, :open, :high, :low, :close, :prev_close, :week_52_high, :week_52_low, :bid_price, :bid_size, :bid_exch, :bid_date, :ask_price, :ask_size, :ask_exch, :ask_date].each do |field|
       send("#{field}=", quote.blank? ? nil : quote.send(field))
     end
     self

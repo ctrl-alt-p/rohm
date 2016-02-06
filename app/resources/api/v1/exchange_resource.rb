@@ -1,10 +1,11 @@
 class Api::V1::ExchangeResource < JSONAPI::Resource
   # Attributes of our model
-  attributes :slug, :exchange, :name,  :url
+  attribute :slug,     format: :string
+  attribute :exchange, format: :string
+  attribute :name,     format: :string
 
   # Objects we own:
-  # has_many :stocks, :ExchangeToStock
-
+  has_many :stocks
 
   # Collection lookup
   def self.records options = {}

@@ -132,6 +132,7 @@ class Quote
   def last_trade_date;     trade_date;end
   def prev_close;          prevclose; end
   def security_type;       type;      end
+  def change_price;        change;    end
 
   def price_spread
     return nil if ask_price.blank?

@@ -17,3 +17,28 @@ class Ohm::Model
     end
   end
 end
+
+class Ohm::Set
+  def order order_options
+    self
+  end
+
+  def where options
+    case
+    when options.blank?
+      return @model.all
+    when options.count == 1
+      key   = options.keys.first
+      value = options.values.first
+      return [@model.send("find_by_#{key}", value)]
+    else
+      return @model.find(options)
+    end
+  end
+end
+
+class Array
+  def order order_options
+    self
+  end
+end
