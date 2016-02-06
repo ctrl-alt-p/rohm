@@ -10,11 +10,11 @@ class Api::V1::OptionResource < JSONAPI::Resource
   attribute :last_price,         format: :float   # Last incremental volume
   attribute :last_volume,        format: :integer # Last incremental volume
   attribute :last_trade_date,    format: :date    # Date and time of last trade
-  attribute :open,               format: :float   # Opening price
-  attribute :high,               format: :float   # Trading day high
-  attribute :low,                format: :float   # Trading day low
-  attribute :close,              format: :float   # Closing price
-  attribute :prev_close,         format: :float   # Previous closing price
+  attribute :open_price,         format: :float   # Opening price
+  attribute :high_price,         format: :float   # Trading day high
+  attribute :low_price,          format: :float   # Trading day low
+  attribute :close_price,        format: :float   # Closing price
+  attribute :prev_close_price,   format: :float   # Previous closing price
   attribute :price_spread,       format: :float   # Bid/Ask spread
   attribute :bid_price,          format: :float   # Current bid
   attribute :bid_size,           format: :integer # Size of bid

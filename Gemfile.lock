@@ -132,6 +132,7 @@ GEM
       nido
       redic (~> 1.5.0)
       stal
+    parallel (1.6.1)
     rack (1.6.4)
     rack-test (0.6.3)
       rack (>= 1.0)
@@ -253,6 +254,7 @@ DEPENDENCIES
   jsonapi-resources
   multi_json
   ohm
+  parallel
   rails (= 4.2.4)
   rspec
   rspec-rails (~> 3.0.0)

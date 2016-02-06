@@ -9,11 +9,11 @@ class Stock < Ohm::Model
   attribute :last_price        # Last incremental price
   attribute :last_volume       # Last incremental volume
   attribute :last_trade_date   # Date and time of last trade
-  attribute :open              # Opening price
-  attribute :high              # Trading day high
-  attribute :low               # Trading day low
-  attribute :close             # Closing price
-  attribute :prev_close        # Previous closing price
+  attribute :open_price        # Opening price
+  attribute :high_price        # Trading day high
+  attribute :low_price         # Trading day low
+  attribute :close_price       # Closing price
+  attribute :prev_close_price  # Previous closing price
   attribute :week_52_high      # 52 week high
   attribute :week_52_low       # 52 week low
   attribute :bid_price         # Current bid
@@ -55,13 +55,26 @@ class Stock < Ohm::Model
 
     # Find all the active chains
     option_chains = expiration_dates.map do |expiration_date|
-      chains      = RetryRequest.retry_request do
-        TradierClient.client.chains(symbol, expiration: expiration_date).map { |chain| Quote.new(chain) }
+      strikes      = RetryRequest.retry_request do
+        TradierClient.client.strikes(symbol, expiration_date)
       end
 
       # Refresh the quotes for the remaining chanins
-      output = [chains].flatten.map { |chain| Option.find_or_create(chain.symbol, self, expiration_date, chain) }
-      output
+      output = [strikes].flatten.map do |strike|
+        # Option ID format:
+        #   <Stock Symbol><Date>< C(all)|P(ut) ><Dollars><Cents>
+        formatted_date    = expiration_date[2..-1].gsub('-', '')
+        formatted_dollars = strike.to_i.to_s.rjust(5, "0")
+        formatted_cents   = ((strike.to_f - strike.to_i.to_f) * 1000).to_i.to_s.rjust(3, "0")
+        symbol_call       = "#{symbol}#{formatted_date}C#{formatted_dollars}#{formatted_cents}"
+        symbol_put        = "#{symbol}#{formatted_date}P#{formatted_dollars}#{formatted_cents}"
+        pair              = [
+          Option.find_or_create(symbol_call, self, Hashie::Mash.new(symbol: symbol_call, option_type: 'call', expiration_date: expiration_date, strike: strike.to_f)),
+          Option.find_or_create(symbol_put,  self, Hashie::Mash.new(symbol: symbol_put,  option_type: 'put',  expiration_date: expiration_date, strike: strike.to_f)),
+        ]
+        pair
+      end
+      output.flatten
     end
 
     option_chains.flatten!
@@ -74,7 +87,7 @@ class Stock < Ohm::Model
   end
 
   def quote= quote
-    [:description, :security_type, :change_price, :change_percentage, :volume, :average_volume, :last_price, :last_volume, :last_trade_date, :open, :high, :low, :close, :prev_close, :week_52_high, :week_52_low, :bid_price, :bid_size, :bid_exch, :bid_date, :ask_price, :ask_size, :ask_exch, :ask_date].each do |field|
+    [:description, :security_type, :change_price, :change_percentage, :volume, :average_volume, :last_price, :last_volume, :last_trade_date, :open_price, :high_price, :low_price, :close_price, :prev_close_price, :week_52_high, :week_52_low, :bid_price, :bid_size, :bid_exch, :bid_date, :ask_price, :ask_size, :ask_exch, :ask_date].each do |field|
       send("#{field}=", quote.blank? ? nil : quote.send(field))
     end
     self

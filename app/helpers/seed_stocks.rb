@@ -30,9 +30,11 @@ class SeedStocks
     progressbar.start
     progressbar.log progressbar.title
     log_run_time "Seeding Stock Options" do
-      @stocks.each do |stock|
+      Parallel.each(stocks, in_processes: 4, finish: ->(item, i, result) { progressbar.increment }) do |stock|
+        # Re-connect
+        Ohm.redis = Redic.new("redis://127.0.0.1:6379")
         stock.refresh_options!
-        progressbar.progress = progressbar.progress + 1
+        nil
       end
     end
     progressbar.finish

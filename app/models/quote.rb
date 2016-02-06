@@ -129,6 +129,11 @@ class Quote
   #
   # Friendly aliases
   #
+  def open_price;          open;      end
+  def high_price;          high;      end
+  def low_price;           low;       end
+  def close_price;         close;     end
+  def prev_close_price;    prev_close;end
   def bid_price;           bid;       end
   def bid_size;            bidsize;   end
   def bid_exch;            bidexch;   end
