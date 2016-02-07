@@ -22,6 +22,16 @@ gem 'jquery-rails'
 
 
 #
+# Production Deployment gems
+#
+gem "foreman"
+gem "rails_12factor",             group: [:production, :staging]
+gem "rails_stdout_logging",       group: [:production, :staging]
+gem "rails_serve_static_assets",  group: [:production, :staging]
+
+
+
+#
 # Basic development gems:
 #
 gem 'byebug',                group: [:development, :test] # Call 'byebug' anywhere in the code to stop execution and get a debugger console
