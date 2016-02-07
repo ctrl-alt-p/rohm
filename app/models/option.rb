@@ -7,7 +7,7 @@ class Option < Ohm::Model
   attribute :change_percentage   # Daily net change
   attribute :volume              # Volume for the day
   attribute :average_volume      # Average daily volume
-  attribute :last_price          # Last incremental volume
+  attribute :last_price          # Last incremental price
   attribute :last_volume         # Last incremental volume
   attribute :last_trade_date     # Date and time of last trade
   attribute :open_price          # Opening price
@@ -65,6 +65,11 @@ class Option < Ohm::Model
       end
     end
 
+    self
+  end
+
+  def refresh_data!
+    Quote.fetch_data!([self], false)
     self
   end
 

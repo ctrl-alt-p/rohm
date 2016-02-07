@@ -28,6 +28,7 @@ gem 'capistrano-rails',      group: :development          # Use Capistrano for d
 #
 gem 'rspec',                                 group: [:development, :test]
 gem 'rspec-rails', '~> 3.0.0',               group: [:development, :test]
+gem 'shoulda-matchers',                      group: [:development, :test]
 gem 'factory_girl_rails',                    group: [:development, :test]
 gem 'faker', '>= 1.6.1',                     group: [:development, :test]
 gem "fakeredis", require: "fakeredis/rspec", group: [:development, :test]
@@ -46,3 +47,5 @@ gem 'hashie'
 gem 'classy_enum'
 gem 'ruby-progressbar'
 gem 'parallel'
+gem 'redis'
+gem 'hiredis'

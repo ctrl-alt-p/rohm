@@ -2,6 +2,7 @@
 
 # Configure our connections:
 Ohm.redis = Redic.new("redis://127.0.0.1:6379")
+$redis    = Redis.new(:driver => :hiredis)
 
 class Ohm::Model
   def self.find_by_id(id)
