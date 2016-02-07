@@ -18,6 +18,7 @@ gem 'unicorn'                               # Use Unicorn as the app server
 # Front-end/Asset-mangement gems
 #
 gem 'bower-rails'
+gem 'jquery-rails'
 
 
 #

@@ -25,5 +25,14 @@ module Rohm
     # Run "rake -D time" for a list of tasks for finding time zone names. Default is UTC.
     config.time_zone = 'UTC'
 
+    #
+    # Angular.js + Rails
+    # - Since vendor/assets/bower_components isn't Rails standard
+    #   I need to add it to the asset path.
+    # - I also add support for glyphicons here too.
+    #
+    config.assets.paths      << Rails.root.join("vendor","assets","bower_components")
+    config.assets.paths      << Rails.root.join("vendor","assets","bower_components","bootstrap-sass-official","assets","fonts")
+    config.assets.precompile << %r(.*.(?:eot|svg|ttf|woff|woff2)$)
   end
 end
