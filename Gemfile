@@ -15,6 +15,13 @@ gem 'unicorn'                               # Use Unicorn as the app server
 
 
 #
+# Front-end/Asset-mangement gems
+#
+gem 'bower-rails'
+gem 'jquery-rails'
+
+
+#
 # Basic development gems:
 #
 gem 'byebug',                group: [:development, :test] # Call 'byebug' anywhere in the code to stop execution and get a debugger console

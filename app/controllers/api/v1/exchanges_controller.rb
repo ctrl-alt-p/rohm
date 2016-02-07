@@ -1,2 +1,2 @@
-class Api::V1::ExchangesController < ApplicationController
+class Api::V1::ExchangesController < JSONAPI::ResourceController
 end
