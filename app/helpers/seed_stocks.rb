@@ -20,12 +20,16 @@ class SeedStocks
     log_run_time "Seeding Stocks" do
       @stock_ids.in_groups_of(1000).map(&:compact).each do |stock_ids|
         stocks = stock_ids.map { |id| Stock[id] }
-        Quote.fetch_data! stocks
+        results = Quote.fetch_data! stocks
 
-        # Individually fetch any stocks that failed the first time around
-        stocks.select! { |stock| stock.description.blank? }
-        stocks.each do |stock|
-          Quote.fetch_data!([stock], true)
+        if results[:missed].present?
+          # Individually fetch any stocks that failed the first time around
+          progressbar.log "Re-trying stocks.symbol=#{results[:misses]}"
+          stocks.select! { |stock| results[:missed].include? stock.symbol }
+          stocks.each do |stock|
+            results = Quote.fetch_data!([stock], true)
+            progressbar.log("Failed to fetch quote for stock.symbol=#{option.symbol}") if results[:misses].include? stock.symbol
+          end
         end
 
         progressbar.progress = progressbar.progress + stocks.count
