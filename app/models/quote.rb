@@ -46,22 +46,24 @@ class Quote
 
     grouped_models = models.inject({}) { |h,v| h[v.symbol]         = v; h }
     grouped_quotes = quotes.inject({}) { |h,v| h[v.symbol]         = v; h }
+
+    hits   = []
+    misses = []
     symbols.each do |symbol|
       model = grouped_models[symbol]
       quote = grouped_quotes[symbol]
+      (quote.present? ? hits : misses) << symbol
+
       if quote.nil?
-        puts "Nil quote for symbol=#{symbol}"
-        if delete_misses
-          models = models - [model]
-          model.delete
-        end
+        # puts "Nil quote for symbol=#{symbol}"
+        model.delete if delete_misses
       else
-        model.quote = quote
+        model.quote= quote
         model.save
       end
     end
 
-    models
+    { hits: hits, misses: misses }
   end
 
   #
