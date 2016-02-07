@@ -41,7 +41,7 @@ class SeedStocks
       Parallel.each(@stock_ids, in_processes: 4, finish: ->(item, i, result) { progressbar.increment }) do |id|
         # Re-connect
         Ohm.redis = Redic.new("redis://127.0.0.1:6379")
-        Stock[id].refresh_options!
+        Stock[id].try(:refresh_options!)
         nil
       end
     end
