@@ -21,6 +21,13 @@ class SeedStocks
       @stock_ids.in_groups_of(1000).map(&:compact).each do |stock_ids|
         stocks = stock_ids.map { |id| Stock[id] }
         Quote.fetch_data! stocks
+
+        # Individually fetch any stocks that failed the first time around
+        stocks.select! { |stock| stock.description.blank? }
+        stocks.each do |stock|
+          Quote.fetch_data!([stock], true)
+        end
+
         progressbar.progress = progressbar.progress + stocks.count
       end
     end

@@ -56,7 +56,7 @@ class Stock < Ohm::Model
     # Find all the active chains
     option_chains = expirations.map do |expiration|
       chains      = RetryRequest.retry_request do
-        TradierClient.client.chains(symbol, expiration: expiration)
+        TradierClient.client.chains(symbol, expiration: expiration).map { |chain| Quote.new(chain) }
       end
       options     = chains.map do |chain|
         Option.find_or_create(chain.symbol, self, chain)
