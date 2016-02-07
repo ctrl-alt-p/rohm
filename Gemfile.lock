@@ -252,12 +252,14 @@ DEPENDENCIES
   faraday
   faraday-detailed_logger
   hashie
+  hiredis
   jbuilder (~> 2.0)
   jsonapi-resources
   multi_json
   ohm
   parallel
   rails (= 4.2.4)
+  redis
   rspec
   rspec-rails (~> 3.0.0)
   ruby-progressbar

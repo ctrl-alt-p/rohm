@@ -37,20 +37,28 @@ class Quote
   #
   # Fetch the data & populate the quotes data
   #
-  def self.fetch_data! models
+  def self.fetch_data! models, delete_misses = false
     symbols = models.map(&:symbol)
 
     max_symbol_length = symbols.map(&:length).max.to_i
 
     quotes  = symbols.in_groups_of(max_symbol_length < 8 ? 500 : 300, nil).map(&:compact).map { |symbols| fetch_symbols(symbols) }.flatten
 
-    grouped_models = models.inject({}) { |h,v| h[v.symbol] = v; h }
-    grouped_quotes = quotes.inject({}) { |h,v| h[v.symbol] = v; h }
+    grouped_models = models.inject({}) { |h,v| h[v.symbol]         = v; h }
+    grouped_quotes = quotes.inject({}) { |h,v| h[v.symbol]         = v; h }
     symbols.each do |symbol|
       model = grouped_models[symbol]
       quote = grouped_quotes[symbol]
-      model.quote = quote
-      model.save
+      if quote.nil?
+        puts "Nil quote for symbol=#{symbol}"
+        if delete_misses
+          models = models - [model]
+          model.delete
+        end
+      else
+        model.quote = quote
+        model.save
+      end
     end
 
     models
@@ -61,7 +69,7 @@ class Quote
   #
   def self.fetch_symbols symbols
     RetryRequest.retry_request do
-      TradierClient.client.quotes(symbols.join(",")).compact.map { |data| Quote.new(data) }
+      TradierClient.client.quotes(symbols.join(",")).compact.select { |data| data.attrs.present? }.map { |data| Quote.new(data) }
     end
   end
 
@@ -89,7 +97,7 @@ class Quote
   # Read in the Tradier::Quote object
   #
   def initialize data
-    self.symbol=            data[:symbol]
+    self.symbol=            data.attrs[:symbol] || data[:symbol]
     self.description=       cast(     data.attrs[:description])
     self.exch=              cast(     data.attrs[:exch])
     self.type=              cast(     data.attrs[:type])

@@ -6,6 +6,9 @@ require 'rspec/rails'
 
 # Connect Ohm to the fake-redis connection
 Ohm.redis = Redic.new("redis://127.0.0.1:6379/1")
+$redis    = Redis.new(:driver => :hiredis)
+$redis.select 1
+
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are

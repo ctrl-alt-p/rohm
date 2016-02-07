@@ -49,32 +49,20 @@ class Stock < Ohm::Model
       return self
     end
 
-    expiration_dates = RetryRequest.retry_request do
+    expirations = RetryRequest.retry_request do
       [TradierClient.client.expirations(symbol)].flatten.compact.map { |date| date.strftime("%Y-%m-%d") }
     end
 
     # Find all the active chains
-    option_chains = expiration_dates.map do |expiration_date|
-      strikes      = RetryRequest.retry_request do
-        TradierClient.client.strikes(symbol, expiration_date)
+    option_chains = expirations.map do |expiration|
+      chains      = RetryRequest.retry_request do
+        TradierClient.client.chains(symbol, expiration: expiration)
+      end
+      options     = chains.map do |chain|
+        Option.find_or_create(chain.symbol, self, chain)
       end
 
-      # Refresh the quotes for the remaining chanins
-      output = [strikes].flatten.map do |strike|
-        # Option ID format:
-        #   <Stock Symbol><Date>< C(all)|P(ut) ><Dollars><Cents>
-        formatted_date    = expiration_date[2..-1].gsub('-', '')
-        formatted_dollars = strike.to_i.to_s.rjust(5, "0")
-        formatted_cents   = ((strike.to_f - strike.to_i.to_f) * 1000).to_i.to_s.rjust(3, "0")
-        symbol_call       = "#{symbol}#{formatted_date}C#{formatted_dollars}#{formatted_cents}"
-        symbol_put        = "#{symbol}#{formatted_date}P#{formatted_dollars}#{formatted_cents}"
-        pair              = [
-          Option.find_or_create(symbol_call, self, Hashie::Mash.new(symbol: symbol_call, option_type: 'call', expiration_date: expiration_date, strike: strike.to_f)),
-          Option.find_or_create(symbol_put,  self, Hashie::Mash.new(symbol: symbol_put,  option_type: 'put',  expiration_date: expiration_date, strike: strike.to_f)),
-        ]
-        pair
-      end
-      output.flatten
+      options.compact
     end
 
     option_chains.flatten!

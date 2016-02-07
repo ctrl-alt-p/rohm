@@ -45,7 +45,7 @@ class Exchange < Ohm::Model
     # Fetch the CSV if stocks
     # - Parse the SYMBOL & NAME from the CSV
     # - Find/Create the stock for each row in the CSV
-    self.stock_symbols = Faraday.get(url).body.split("\n")[1..-1].map { |line| line.split(',').first.strip }.select(&:present?).sort
+    self.stock_symbols= Faraday.get(url).body.split("\n")[1..-1].map { |line| line.split(',').first.strip }.select(&:present?).reject { |symbol| symbol.include?('_') || symbol.include?('-') }.sort
     self
   end
 end

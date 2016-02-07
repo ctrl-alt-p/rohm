@@ -68,4 +68,9 @@ class Option < Ohm::Model
     self
   end
 
+  def refresh_data!
+    Quote.fetch_data!([self], false)
+    self
+  end
+
 end
