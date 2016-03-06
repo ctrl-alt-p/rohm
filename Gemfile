@@ -5,6 +5,8 @@ source 'https://rubygems.org'
 # Core rails gems
 #
 gem 'rails',        '4.2.4'                 #
+gem 'pg'                                    # Use postgresql as the database for Active Record
+gem 'bcrypt',       '~> 3.1.7'              # Use ActiveModel has_secure_password
 gem 'sass-rails',   '~> 5.0'                # Use SCSS for stylesheets
 gem 'uglifier',     '>= 1.3.0'              # Use Uglifier as compressor for JavaScript assets
 gem 'coffee-rails', '~> 4.1.0'              # Use CoffeeScript for .coffee assets and views
@@ -17,8 +19,9 @@ gem 'unicorn'                               # Use Unicorn as the app server
 #
 # Front-end/Asset-mangement gems
 #
-gem 'bower-rails'
-gem 'jquery-rails'
+gem 'react-rails', '~> 1.6.0'               # react-rails makes it easy to use React and JSX in your Ruby on Rails
+gem 'jquery-rails'                          # Use jquery as the JavaScript library
+gem 'turbolinks'                            # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
 
 
 #
@@ -34,6 +37,7 @@ gem "rails_serve_static_assets",  group: [:production, :staging]
 #
 # Basic development gems:
 #
+gem 'awesome_print'
 gem 'byebug',                group: [:development, :test] # Call 'byebug' anywhere in the code to stop execution and get a debugger console
 gem 'web-console', '~> 2.0', group: :development          # Access an IRB console on exception pages or by using <%= console %> in views
 gem 'spring',                group: :development          # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
@@ -52,14 +56,24 @@ gem "fakeredis", require: "fakeredis/rspec", group: [:development, :test]
 
 
 #
-# Gems used by the app:
+# Gems to connect to Tradier
 #
 gem 'faraday'
 gem 'faraday-detailed_logger'
-gem 'awesome_print'
-gem 'ohm'
-gem 'tradier'
 gem 'multi_json'
+gem 'tradier'
+
+
+#
+# Gems used by the data pump
+#
+gem 'amqp'
+
+
+#
+# Gems used by the app:
+#
+gem 'ohm'
 gem 'hashie'
 gem 'classy_enum'
 gem 'ruby-progressbar'
