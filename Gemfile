@@ -22,6 +22,7 @@ gem 'unicorn'                               # Use Unicorn as the app server
 gem 'react-rails', '~> 1.6.0'               # react-rails makes it easy to use React and JSX in your Ruby on Rails
 gem 'jquery-rails'                          # Use jquery as the JavaScript library
 gem 'turbolinks'                            # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
+gem 'bootstrap-sass', '~> 3.3.6'            #
 
 
 #

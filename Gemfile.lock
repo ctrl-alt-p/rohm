@@ -41,6 +41,8 @@ GEM
       amq-protocol (~> 1.9)
       eventmachine
     arel (6.0.3)
+    autoprefixer-rails (6.3.3.1)
+      execjs
     awesome_print (1.6.1)
     babel-source (5.8.35)
     babel-transpiler (0.7.0)
@@ -49,6 +51,9 @@ GEM
     bcrypt (3.1.11)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
+    bootstrap-sass (3.3.6)
+      autoprefixer-rails (>= 5.2.1)
+      sass (>= 3.3.4)
     builder (3.2.2)
     byebug (8.2.2)
     capistrano (3.4.0)
@@ -277,6 +282,7 @@ DEPENDENCIES
   amqp
   awesome_print
   bcrypt (~> 3.1.7)
+  bootstrap-sass (~> 3.3.6)
   byebug
   capistrano-rails
   classy_enum
